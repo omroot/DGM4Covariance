@@ -1,0 +1,10 @@
+.DS_Store
+.idea/
+.vscode/
+__pycache__/
+.ipynb_checkpoints/
+*.log
+*.env
+*.command
+*.csv
+*.parquet
