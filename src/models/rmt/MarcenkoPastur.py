@@ -17,6 +17,7 @@ class MarcenkoPastur:
                  grid_size: int = 1000,
                  kernel: str = 'gaussian',
                  cv: Union[int,BaseCrossValidator] = 100,
+                 kernel_bandwidth: float  = 0.01,
                  min_bandwidth_grid_exponent: int = -3,
                  max_bandwidth_grid_exponent: int = 1,
                  bandwidth_grid_size: int = 250,
@@ -46,6 +47,7 @@ class MarcenkoPastur:
         self.grid_size = grid_size
         self.kernel = kernel
         self.cv = cv
+        self.kernel_bandwidth = kernel_bandwidth
         self.min_bandwidth_grid_exponent = min_bandwidth_grid_exponent
         self.max_bandwidth_grid_exponent = max_bandwidth_grid_exponent
         self.bandwidth_grid_size = bandwidth_grid_size
@@ -119,6 +121,7 @@ class MarcenkoPastur:
         """
         kernel_density_estimator = KernelDensityEstimator(kernel=self.kernel,
                                                           cv=self.cv,
+                                                          kernel_bandwidth=self.kernel_bandwidth,
                                                           min_bandwidth_grid_exponent=self.min_bandwidth_grid_exponent,
                                                           max_bandwidth_grid_exponent=self.max_bandwidth_grid_exponent,
                                                           bandwidth_grid_size=self.bandwidth_grid_size)

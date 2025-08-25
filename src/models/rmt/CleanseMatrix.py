@@ -21,9 +21,10 @@ class CleanseMatrix:
                  grid_size: int = 1000,
                  kernel: str = 'gaussian',
                  cv: Union[int, BaseCrossValidator] = 100,
-                 min_bandwidth_grid_exponent: int = -3,
+                 kernel_bandwidth: float = 0.01,
+                 min_bandwidth_grid_exponent: int = -4,
                  max_bandwidth_grid_exponent: int = 1,
-                 bandwidth_grid_size: int = 250,
+                 bandwidth_grid_size: int = 1000,
                  initial_variance: float = 0.5,
                  epsilon: float = 1e-5,
                  min_q: float = 0.5,
@@ -37,6 +38,7 @@ class CleanseMatrix:
         self.grid_size =grid_size
         self.kernel = kernel
         self.cv = cv
+        self.kernel_bandwidth = kernel_bandwidth
         self.min_bandwidth_grid_exponent = min_bandwidth_grid_exponent
         self.max_bandwidth_grid_exponent = max_bandwidth_grid_exponent
         self.bandwidth_grid_size = bandwidth_grid_size
@@ -71,11 +73,7 @@ class CleanseMatrix:
         scaler = float(eigenvalues_corrected.shape[0] - self.estimated_number_signal_factors)
         eigenvalues_corrected[self.estimated_number_signal_factors:] = eigenvalues_corrected[self.estimated_number_signal_factors:].sum() / scaler
         eigenvalues_corrected = np.diag(eigenvalues_corrected)
-        print(eigenvalues_corrected.shape)
         denoised_correlation_matrix = np.dot(eigenvectors, eigenvalues_corrected).dot(eigenvectors.T)
-        print(denoised_correlation_matrix)
-
-        print(denoised_correlation_matrix)
         scaled_denoised_correlation_matrix = covariance2correlation(denoised_correlation_matrix)
         return scaled_denoised_correlation_matrix
 
@@ -145,6 +143,7 @@ class CleanseMatrix:
         marcenko_pastur = MarcenkoPastur(grid_size = self.grid_size,
                                          kernel= self.kernel,
                                          cv= self.cv,
+                                         kernel_bandwidth=self.kernel_bandwidth,
                                          min_bandwidth_grid_exponent= self.min_bandwidth_grid_exponent,
                                          max_bandwidth_grid_exponent= self.max_bandwidth_grid_exponent,
                                          bandwidth_grid_size= self.bandwidth_grid_size,
