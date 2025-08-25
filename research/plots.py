@@ -176,7 +176,7 @@ def qqplot(x: Union[np.ndarray, list],
     ax.set_aspect('equal', adjustable='box')
     ax.grid(True, alpha=0.3)
 
-    return ax
+    return ax, ks_stat, ks_pvalue
 
 
 def qqplot_against_normal(data: Union[np.ndarray, list],
