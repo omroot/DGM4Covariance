@@ -1,0 +1,314 @@
+\documentclass{article}
+
+% if you need to pass options to natbib, use, e.g.:
+ \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2025
+
+% The authors should use one of these tracks.
+% Before accepting by the NeurIPS conference, select one of the options below.
+% 0. "default" for submission
+\usepackage[preprint]{neurips_2025}
+  % \usepackage{neurips_2025}
+% the "default" option is equal to the "main" option, which is used for the Main Track with double-blind reviewing.
+% 1. "main" option is used for the Main Track
+%  \usepackage[main]{neurips_2025}
+% 2. "position" option is used for the Position Paper Track
+%  \usepackage[position]{neurips_2025}
+% 3. "dandb" option is used for the Datasets & Benchmarks Track
+ % \usepackage[dandb]{neurips_2025}
+% 4. "creativeai" option is used for the Creative AI Track
+%  \usepackage[creativeai]{neurips_2025}
+% 5. "sglblindworkshop" option is used for the Workshop with single-blind reviewing
+ % \usepackage[sglblindworkshop]{neurips_2025}
+% 6. "dblblindworkshop" option is used for the Workshop with double-blind reviewing
+%  \usepackage[dblblindworkshop]{neurips_2025}
+
+% After being accepted, the authors should add "final" behind the track to compile a camera-ready version.
+% 1. Main Track
+ % \usepackage[main, final]{neurips_2025}
+% 2. Position Paper Track
+%  \usepackage[position, final]{neurips_2025}
+% 3. Datasets & Benchmarks Track
+ % \usepackage[dandb, final]{neurips_2025}
+% 4. Creative AI Track
+%  \usepackage[creativeai, final]{neurips_2025}
+% 5. Workshop with single-blind reviewing
+%  \usepackage[sglblindworkshop, final]{neurips_2025}
+% 6. Workshop with double-blind reviewing
+%  \usepackage[dblblindworkshop, final]{neurips_2025}
+% Note. For the workshop paper template, both \title{} and \workshoptitle{} are required, with the former indicating the paper title shown in the title and the latter indicating the workshop title displayed in the footnote.
+% For workshops (5., 6.), the authors should add the name of the workshop, "\workshoptitle" command is used to set the workshop title.
+% \workshoptitle{WORKSHOP TITLE}
+
+% "preprint" option is used for arXiv or other preprint submissions
+% \usepackage[preprint]{neurips_2025}
+% to avoid loading the natbib package, add option nonatbib:
+%\usepackage[nonatbib]{neurips_2025}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\sisetup{output-exponent-marker=E}
+
+
+% Note. For the workshop paper template, both \title{} and \workshoptitle{} are required, with the former indicating the paper title shown in the title and the latter indicating the workshop title displayed in the footnote. 
+\title{Deep Generative Modeling for Covariance Denoising in Finance}
+
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
+
+\author{
+  Oualid Missaoui\thanks{Founder, EimiLabs.ai LLC
+  ; Adjunct Professor, Baruch College (CUNY).}\\
+  EimiLabs.ai\\
+  New York, NY, USA\\
+  Department of Mathematics, Baruch College (CUNY)\\
+  New York, NY , USA\\
+  \texttt{oualid@eimilabs.ai}
+}
+
+
+% \author{%
+%   David S.~Hippocampus\thanks{Use footnote for providing further information
+%     about author (webpage, alternative address)---\emph{not} for acknowledging
+%     funding agencies.} \\
+%   Department of Computer Science\\
+%   Cranberry-Lemon University\\
+%   Pittsburgh, PA 15213 \\
+%   \texttt{hippo@cs.cranberry-lemon.edu} \\
+%   % examples of more authors
+%   % \And
+%   % Coauthor \\
+%   % Affiliation \\
+%   % Address \\
+%   % \texttt{email} \\
+%   % \AND
+%   % Coauthor \\
+%   % Affiliation \\
+%   % Address \\
+%   % \texttt{email} \\
+%   % \And
+%   % Coauthor \\
+%   % Affiliation \\
+%   % Address \\
+%   % \texttt{email} \\
+%   % \And
+%   % Coauthor \\
+%   % Affiliation \\
+%   % Address \\
+%   % \texttt{email} \\
+% }
+
+
+\begin{document}
+\maketitle
+
+
+\begin{abstract}
+Estimating asset return covariances is fragile in high dimensions; classical fixes (shrinkage, graphical models, Mar\v{c}enko-Pastur (MP)) often suppress noise at the cost of distorting structure. While ill-posedness is obvious when the number of assets ($N$) exceeds the number of observations ($T$), it can still manifest even when $T>N$, especially in the presence of significant correlation, underlying driving factors, heavy-tailedness, or regime changes. We propose a data-level denoising approach using deep generative models (DGM) such as Denoising Diffusion Probabilistic Models (DDPM) and Flow Matching (FM), that learn a data driven prior from finite panels, synthesize returns, and yield Positive Semi Definite (PSD) covariances reestimated from the synthetic data.  Our covariances reduce ill-conditioning and improve both global minimum variance and maximum Sharpe portfolios versus raw samples and MP; applying MP after DGM adds little benefit. Deep generative modeling thus offers a practical, scalable alternative to classical denoisers for portfolio construction. Code: \href{https://github.com/omroot/DGM4Covariance}{\texttt{github.com/omroot/DGM4Covariance}}.
+\end{abstract}
+
+
+\section{Introduction}
+
+Generative deep models (DGMs) have advanced rapidly over the past decade, with methods commonly grouped into four families: autoregressive, energy based, flow based, and latent variable models (though alternative taxonomies exist) \cite{dgmjakub2024}. Among these, Denoising Diffusion Probabilistic Models (DDPMs) \cite{ho2020denoising} and Flow Matching (FM) \cite{lipman2023} have emerged as particularly successful, especially for image synthesis. Beyond images, DGMs are increasingly applied to tabular \cite{TabDDPM2023}  and time series generation \cite{diffusionts2024}, including finance \cite{Lesniewski2025}. Score-based diffusion models formulated via stochastic differential equations (SDEs) \cite{YangSong2021} generate synthetic financial returns by learning a time continuous score field parameterized by a neural network (e.g., a two-layer softplus network) and simulating reverse time dynamics. Empirically, such models have been reported to reduce the condition number of sample covariance matrices estimated from generated data, indicating potential benefits for portfolio construction. 
+In addition, a diffusion factor model \cite{factordiff2005} was proposed to integrate latent factor structure into generative diffusion processes to address challenges in high dimensional financial scenario simulation with limited data. 
+
+
+Motivated by recent advances, we revisit denoising diffusion probabilistic models (DDPMs) and Flow Matching (FM) for covariance matrix denoising in finance, benchmarking them against the standard random matrix eigenvalue cleaner of Mar\v{c}enko-Pastur (MP) \cite{rmtbook}. Covariances are foundational for portfolio construction governing global minimum-variance and mean variance allocations, risk budgeting, hedging, and factor investing and they also underpin regression-based forecasting, scenario analysis, clustering, and dimensionality reduction across analytics and decision pipelines \cite{RiskAssetAllocation2005}.
+
+Estimating covariances is difficult because the parameter count scales as $O(N^2)$ while data are finite, noisy, and subject to structural breaks. Instability is severe when $T<N$, and it can persist even when $T>N$ \cite{mlam2020} due to common factors, near collinearities, heavy tails, and regime shifts that yield ill-conditioned, near low rank matrices. Since portfolio construction relies on the inverse of the covariance matrix ( $\widehat{\Sigma}^{-1}$), errors in small eigenvalues are amplified, producing fragile weights and mismeasured risk. Classical regularizers such as shrinkage \cite{LedoitWolf2004}, graphical models \cite{graphcov2010}, and random matrix cleaning \cite{laloux2000} stabilize estimates but may distort economically meaningful dependence. We therefore evaluate deep generative priors (diffusion and flow matching) as data driven tools  to recover cleaner, more stable covariance structure from finite samples, with the goal of improving portfolio reliability and downstream risk analytics.
+
+
+The rest of the paper is structured as follows. Section~\ref{sec:mp} reviews the Mar\v{c}enko-Pastur eigenvalue-cleaning method \cite{laloux2000}, which we adopt as our strongest classical baseline. Section~\ref{sec:dgm} introduces our covariance denoising approach based on deep generative models Denoising, Diffusion Probabilistic Models (DDPMs) and flow matching. Section~\ref{sec:experiment} details the controlled experimental design and reports the empirical results.
+
+
+\section{Covariance Denoising and the Mar\v{c}enko-Pastur Framework in Finance}\label{sec:mp}
+
+In high-dimensional financial settings, empirical covariance matrices estimated from limited historical data are notoriously noisy, often leading to unstable risk estimates and unreliable portfolio optimization. Random Matrix Theory (RMT) \cite{rmtbook} provides a principled statistical framework to separate meaningful structure (signal) from noise in such matrices. A cornerstone of this theory is the \emph{Mar\v{c}enko-Pastur} (MP) distribution, which describes the asymptotic eigenvalue spectrum of sample covariance matrices generated from independent identically distributed (i.i.d.) variables with zero mean and finite variance.  
+
+Let \( X \in \mathbb{R}^{T \times N} \) be a matrix of \( N \) securities observed over \( T \) time steps, with $C = \frac{1}{T} X^\top X$ denoting the sample covariance matrix and \( q = \frac{T}{N} \) the aspect ratio. If the underlying process has variance \(\sigma^2\), the MP probability density function for the eigenvalues \(\lambda\) of \(C\) is:  
+\[
+f(\lambda) = 
+\begin{cases}
+\frac{q}{2\pi \lambda \sigma^2} \sqrt{(\lambda_{\text{max}} -\lambda)(\lambda - \lambda_{\text{min}})} & \lambda_{\text{min}} \leq \lambda \leq \lambda_{\text{max}}, \\
+0 & \text{otherwise}
+\end{cases}
+\]
+where   $\lambda_{\max} = \sigma^2\left( 1 + \sqrt{\frac{1}{q}} \right)^2$ and 
+$\lambda_{\min} = \sigma^2\left( 1 - \sqrt{\frac{1}{q}} \right)^2$.
+As \( N, T \to \infty \) with \( 1 < q < \infty \), the empirical eigenvalue distribution converges to the MP law. In practice, eigenvalues within \([ \lambda_{\min}, \lambda_{\max} ]\) are typically attributed to random fluctuations (noise), while those outside are interpreted as containing genuine market structure (signal).  
+
+
+As depicted in  \cite{mlam2020}, to fit the Mar\v{c}enko--Pastur law, we (i) estimate the empirical eigenvalue density via KDE (with bandwidth chosen by cross-validation), (ii) grid over $q>1$ and, for each $q$, choose $\sigma^{2}$ that minimizes the sum of squared errors between the MP PDF and the KDE estimate, and (iii) select the $(q,\sigma^{2})$ pair with the smallest error and compute the corresponding spectral edges $\lambda_{\min}$ and $\lambda_{\max}$.
+
+
+One classical RMT-based denoising approach is the \emph{Constant Residual Eigenvalue Method} proposed by Laloux et al. \cite{laloux2000}. Here, eigenvalues in the noise bulk \([ \lambda_{\min}, \lambda_{\max} ]\) are replaced by their average, preserving the trace of the covariance matrix. If \( \Lambda = \{\lambda_1, \dots, \lambda_N\} \) are the ordered eigenvalues, and \(i\) is the index where \(\lambda_i > \lambda_{\max} \ge \lambda_{i+1}\), then all eigenvalues \(\lambda_j\) for \( j > i \) are set to the mean of the noise eigenvalues. The denoised covariance matrix is then reconstructed using the original eigenvectors but with the adjusted eigenvalue spectrum, ensuring positive semi-definiteness and reduced noise influence.  
+
+
+\section{Proposed Methodology: Deep Generative Covariance Denoising}\label{sec:dgm}
+We propose a \emph{data-level} denoising pipeline that leverages Denoising Diffusion Probabilistic Models (DDPM) \cite{ho2020denoising} and Flow Matching (FM)\cite{lipman2023}. Rather than manipulating covariance eigenvalues directly, we (i) fit a generative model to the observed return panel, (ii) sample a large synthetic panel from the learned prior, and (iii) re-estimate the covariance (or correlation) from the synthetic data. This replaces finite-sample noise in the empirical panel with draws from a smoother, data-driven distribution, yielding a denoised covariance estimate.
+\paragraph{Pipeline overview.}\label{dgmdenoising_pipeline} Let $X\in\mathbb{R}^{T\times N}$ be the matrix of (demeaned) returns for $N$ assets over $T$ periods.
+\begin{itemize}
+    \item \textbf{Training.} Fit a DGM (DDPM or FM) on $X$ to learn a generative prior $p_\theta$ over returns.
+    \item \textbf{Synthesis.} Sample $\widetilde{X}\in\mathbb{R}^{\widetilde{T}\times N}$ from $p_\theta$ with $\widetilde{T}\ge T$ to reduce Monte Carlo error.
+    \item \textbf{Re-estimation.} Compute a PSD covariance estimate from the synthetic panel, e.g. $\widehat{C}_{\text{DGM}}=\mathrm{corr}(\widetilde{X})$, 
+      $\widehat{D}=\mathrm{diag}(\widehat{\Sigma}_{\text{emp}})\ \text{ or }\ \mathrm{diag}(\mathrm{var}(\widetilde{X}))$  
+    and set $\widehat{\Sigma}_{\text{DGM}}=\widehat{D}^{1/2}\widehat{C}_{\text{DGM}}\widehat{D}^{1/2}$ to ensure positive semidefiniteness and control the marginal scales.
+    \item \textbf{Hybrid (optional).} Apply Mar\v{c}enko--Pastur (MP) eigenvalue cleaning to $\widehat{\Sigma}_{\text{DGM}}$ to obtain $\widehat{\Sigma}_{\text{DGM+MP}}$.
+\end{itemize}
+We next detail the DDPM and FM instantiations used for training and sampling.
+\subsection{Denoising Diffusion Probabilistic Model (DDPM)}
+We use the baseline DDPM in  \cite{ho2020denoising}. In fact, we adopt a linear noise schedule $\beta_t\in[\beta_{\min},\beta_{\max}]$ with $\alpha_t=1-\beta_t$ and $\bar{\alpha}_t=\prod_{s=0}^t \alpha_s$. The forward diffusion is $q(x_t\mid x_0)=\mathcal{N}\!\left(x_t;\ \sqrt{\bar{\alpha}_t}\,x_0,\ (1-\bar{\alpha}_t)I\right)$, 
+implemented by $x_t=\sqrt{\bar{\alpha}_t}\,x_0+\sqrt{1-\bar{\alpha}_t}\,\epsilon$, $\epsilon\sim\mathcal{N}(0,I)$. The reverse process in $\epsilon$-parameterization is
+$p_\theta(x_{t-1}\mid x_t)=\mathcal{N}\!\left(x_{t-1};\ \mu_\theta(x_t,t),\ \beta_t I\right)$, and
+$\mu_\theta(x_t,t)=\frac{1}{\sqrt{\alpha_t}}\!\left(x_t-\frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\,\epsilon_\theta(x_t,t)\right)$.
+Sampling starts from $x_T\sim\mathcal{N}(0,I)$ and iterates
+$x_{t-1}=\mu_\theta(x_t,t)+\sqrt{\beta_t}\,z$ with $z\sim\mathcal{N}(0,I)$ for $t>0$ (and $z=0$ at $t=0$).
+We train with the simplified objective
+\[
+\mathcal{L}_{\mathrm{simple}}
+=\mathbb{E}_{t,x_0,\epsilon}\ \bigl\|\ \epsilon-\epsilon_\theta\!\bigl(\sqrt{\bar{\alpha}_t}x_0+\sqrt{1-\bar{\alpha}_t}\,\epsilon,\ t\bigr)\ \bigr\|_2^2,
+\]
+where $\epsilon_\theta$ is a time conditioned Multilayer Perceptron (MLP).
+
+\subsection{Flow Matching}
+We use the baseline flow matching algorithm published in \cite{lipman2023} that consists of a linear coupling between a Gaussian source $x_0\sim\mathcal{N}(0,I)$ and a data sample $x_1\sim p_{\text{data}}$. For $t\sim\mathrm{Unif}[0,1]$, define the path $x_t=(1-t)\,x_0+t\,x_1$ with exact velocity $u(x_0,x_1,t)=x_1-x_0$. A neural field $v_\theta(x,t)$ (MLP with sinusoidal time embeddings) is trained by
+\[
+\mathcal{L}(\theta)=\mathbb{E}_{x_0,x_1,t}\ \bigl\|\,v_\theta(x_t,t)-(x_1-x_0)\,\bigr\|_2^2,
+\]
+an unbiased estimator of $\mathbb{E}[x_1-x_0\mid x_t,t]$. Generation solves the learned ordinary differentual equation (ODE) $\frac{dx}{dt}=v_\theta(x,t)$ from $t=0$ to $t=1$ with $x(0)\sim\mathcal{N}(0,I)$, using explicit Euler updates $x_{k+1}=x_k+\Delta t\,v_\theta(x_k,t_k)$.
+
+
+\section{Experiments}\label{sec:experiment}
+
+\subsection{Experiment setup}
+Following \cite{mlam2020}, let $N=K M$ assets be partitioned into $K$ sectoral blocks $\{\mathcal{B}_b\}_{b=1}^K$ of equal size $M$. The population (non-empirical) correlation matrix $C^\star\in\mathbb{R}^{N\times N}$ is block-structured:
+\[
+C^\star_{ij} \;=\;
+\begin{cases}
+1, & i=j,\\[2pt]
+\rho, & i\neq j,\ \ i,j\in \mathcal{B}_b \text{ for some } b,\\[2pt]
+0, & \text{otherwise},
+\end{cases}
+\]
+with within-block correlation $\rho\in (0,1)$ and zero cross-block correlation. Idiosyncratic variances are heterogeneous: draw $\sigma_i^2 \sim \mathrm{Unif}\big[\underline{\sigma}^2,\overline{\sigma}^2\big]$ independently across $i$. The population covariance is
+$\Sigma^\star \;=\; D^{1/2} C^\star D^{1/2}$, where $D \;=\; \mathrm{diag}(\sigma_1^2,\ldots,\sigma_N^2)$.
+To encode equal (population) Sharpe ratios across assets, set the population mean vector $\mu^\star\in\mathbb{R}^N$ as $\mu_i^\star \;=\; \theta\, \sigma_i, \qquad \theta>0$.
+Given a sample size $T$, generate observations $x_t \overset{\text{i.i.d.}}{\sim} \mathcal{N}(\mu^\star,\Sigma^\star)$ for $t=1,\ldots,T$. Define the empirical mean and covariance
+$\widehat{\mu} \;=\; \frac{1}{T}\sum_{t=1}^T x_t, $ ,  $\widehat{\Sigma} \;=\; \frac{1}{T-1}\sum_{t=1}^T (x_t-\widehat{\mu})(x_t-\widehat{\mu})^\top$,
+and the empirical correlation $\widehat{C} \;=\; \widehat{D}^{-1/2}\widehat{\Sigma}\widehat{D}^{-1/2}$ with $\widehat{D}=\mathrm{diag}(\widehat{\Sigma})$.
+
+
+
+Because $(\Sigma^\star,\mu^\star)$ are known in this synthetic setting, we can compute the population-optimal portfolios to serve as benchmarks. Let $\mathbf{1}$ denote the all-ones vector and let $r_f$ be the risk-free rate with excess mean $\mu_e^\star=\mu^\star - r_f \mathbf{1}$.
+The Minimum-Variance (MV) Portfolio weights are 
+$w_{\mathrm{MV}}^\star \;=\; \frac{(\Sigma^\star)^{-1} \mathbf{1}}{\mathbf{1}^\top (\Sigma^\star)^{-1}\mathbf{1}}$ and the Maximum-Sharpe (MS) weights are $w_{\mathrm{MS}}^\star \;=\; \frac{(\Sigma^\star)^{-1} \mu_e^\star}{\mathbf{1}^\top (\Sigma^\star)^{-1} \mu_e^\star}$ \cite{RiskAssetAllocation2005}.
+
+
+
+\subsection{Results and Discussion}
+
+We generate a block–structured covariance matrix $\Sigma^\star \in \mathbb{R}^{N\times N}$ with $K=5, M=10$ and $T=1000$ since we want to evaluate the $T>N$ denoising case. 
+
+From these true statistics we simulate $B=100$ independent datasets. For each dataset $b=1,\dots,B$ we run the DGM denoising pipeline as depicted in \ref{dgmdenoising_pipeline}.
+
+We summarize accuracy by the RMSE of weights relative to the oracle portfolio, i.e., $\mathrm{RMSE}(w) \;=\;\sqrt{\frac{1}{N}\,\bigl\|\,w - w^\star\,\bigr\|_2^2},$ averaged over $b=1,\dots,B$ for each method/portfolio pair.
+
+Table~ \ref{tab:rmse-portfolio} shows that  FM  attains the lowest RMSE for the \emph{maximum–Sharpe} portfolio FM+MP is a close second. DDPM trails FM, and adding MP to DDPM slightly worsens performance.
+For the \emph{minimum–variance} portfolio, the  MP  estimator performs best, followed by the empirical covariance. All generative variants are worse on this task.
+\noindent In terms of conditioning, the generative methods drastically reduce the spectral
+condition number \( \kappa(\Sigma)= \frac{\lambda_{\max}}{\lambda_{\min}} \) compared with Empirical/MP.
+\noindent The decoupling between \( \kappa \) and minimum–variance RMSE indicates that improving
+conditioning alone is insufficient; performance depends on how well the relevant eigenspace and the
+precision structure \( \Sigma^{-1} \) are recovered for each objective.
+Consistent with their \emph{maximum–Sharpe} outperformance where the optimal weights
+\( w_{\star} \propto \Sigma^{-1}\mu \), the  DGM  approaches (DDPM/FM) appear to denoise
+most effectively \emph{along the mean direction \( \mu \)}.
+By contrast, the \emph{minimum–variance} portfolio
+\( w_{\mathrm{MV}} \propto \Sigma^{-1}\mathbf{1} \) is more sensitive to small-eigenvalue
+(and thus precision-matrix) errors in the null-mean subspace, where  MP  excels.
+
+
+
+\begin{table}[t]
+  \centering
+  \caption{RMSE statistics (means $\mu_{\text{RMSE}}$ and standard deviations $\sigma_{\text{RMSE}}$) for Maximum Sharpe and Minimum Variance portfolios, together with condition-number statistics (means $\mu_{\kappa}$ and standard deviations $\sigma_{\kappa}$) of the estimated covariance matrix, across denoising methods.}
+  \label{tab:rmse-portfolio}
+  \begin{tabular}{l
+                  S[table-format=1.3] S[table-format=1.4]
+                  S[table-format=1.3] S[table-format=1.4]
+                  S[table-format=3.2] S[table-format=2.2]}
+    \toprule
+    & \multicolumn{2}{c}{Maximum Sharpe RMSE} & \multicolumn{2}{c}{Minimum Variance RMSE} & \multicolumn{2}{c}{Condition Number $\kappa$} \\
+    \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+    Method & {$\mu_{\text{RMSE}}$} & {$\sigma_{\text{RMSE}}$}
+           & {$\mu_{\text{RMSE}}$} & {$\sigma_{\text{RMSE}}$}
+           & {$\mu_{\kappa}$} & {$\sigma_{\kappa}$} \\
+    \midrule
+    Empirical  & 0.22 & 0.02   & 0.0089 & 0.0013    & 102.76 & 5.97 \\
+    MP         & 0.199 & 0.01   & 0.0056  & 0.0008   & 94.23 & 4.42 \\
+    DDPM       & 0.16 & 0.0019 & 0.018 & 0.0008 & 15.54 & 0.86 \\
+    DDPM + MP  & 0.166 & 0.007 & 0.036 & 0.0009 &  11.15 & 0.58 \\
+    FM         & 0.146 & 0.00037 & 0.055 & 0.0002 & 8.10 & 0.41 \\
+    FM + MP    & 0.148 & 0.001 & 0.053 & 0.0001 &  5.80 & 0.26 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+
+\section{Conclusion}
+
+
+On factor-driven synthetic panels,  FM delivers the lowest weight RMSE for the maximum–Sharpe objective, with FM+MP close behind and DDPM trailing.
+For global minimum–variance, MP is best (empirical second) and all generative variants underperform.
+Generative priors sharply reduce the condition number \(\kappa(\widehat{\Sigma})\), yet MV errors remain elevated, indicating that conditioning alone is insufficient.
+The evidence suggests DGMs denoise chiefly along the mean direction, improving the action of \(\widehat{\Sigma}^{-1}\mu\) (Sharpe) more than \(\widehat{\Sigma}^{-1}\mathbf{1}\) (MV).
+As future work, we will test on real out-of-sample data, model conditional/dynamic covariances, explore RMT-guided hybrids, adopt PSD/factor-structured parameterizations with turnover, and develop theory linking score/flow priors to implicit eigenvalue shrinkage.
+Overall, deep generative priors appear to complement classical denoisers for return-aware objectives, while MP remains preferable for minimum-variance targeting.
+
+
+
+
+\begin{thebibliography}{99}
+
+ \bibitem{mlam2020}  Marcos M. Lopez de Prado (2020),  Machine Learning for Asset Managers.  Cambridge University Press.
+ \bibitem{ho2020denoising} Ho, Jonathan and Jain, Ajay and Abbeel, Piete (2020), Denoising Diffusion Probabilistic Models. NIPS.
+ \bibitem{laloux2000} Laloux, L., P. Cizeau, J. P. Bouchaud, and M. Potters (2000), Random Matrix Theory and Financial Correlations. International Journal of Theoretical and
+Applied Finance, Vol. 3, No. 3, pp. 391–97.
+\bibitem{hayou2017} Hayou, S. (2017), Cleaning the Correlation Matrix with a Denoising Autoencoder. arXiv preprint arXiv:1708.02985 [math.ST].
+\bibitem{zbai2010}  Zhidong Bai , Jack W. Silverstein (2010), Spectral Analysis of Large Dimensional Random Matrices, Springer.
+\bibitem{lipman2023} Yaron Lipman,  Ricky T. Q. Chen,  Heli Ben-Hamu, Maximilian Nickel,  Matt Le (2023), Flow Matching for Generative Modeling, ICLR.
+\bibitem{dgmjakub2024} Jakub M. Tomczak  (2024), Deep Generative Modeling, Springer.
+\bibitem{Lesniewski2025} Andrew Lesniewski and Giulio Trigila (2025), Beyond Monte Carlo: Harnessing Diffusion Models
+to Simulate Financial Market Dynamics,  arXiv preprint arXiv:2412.00036 [math.ST].
+\bibitem{YangSong2021} Yang Song, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, Ben Poole (2021), Score-Based Generative Modeling through Stochastic Differential Equations, ICLR.
+\bibitem{factordiff2005} Chen, Minshuo and Xu, Renyuan and Xu, Yumin and Zhang, Ruixun, Diffusion Factor Models: Generating High-Dimensional Returns with Factor Structure (April 08, 2025). Available at SSRN: https://ssrn.com/abstract=5211437 or http://dx.doi.org/10.2139/ssrn.5211437
+\bibitem{TabDDPM2023}  
+Akim Kotelnikov, Dmitry Baranchuk, Ivan Rubachev, Artem Babenko (2023), TabDDPM: Modelling Tabular Data with Diffusion Models, ICML.
+\bibitem{diffusionts2024}  Xinyu Yuan, Yan Qiao (2024) Diffusion-TS: Interpretable diffusion for general time series generation. ICLR.
+\bibitem{rmtbook} Zhidong Bai, Jack W. Silverstein (2010)
+Spectral Analysis of Large Dimensional Random Matrices, Springer.
+\bibitem{LedoitWolf2004} Ledoit, O., and M. Wolf (2004), A Well-Conditioned Estimator for Large Dimensional Covariance Matrices. Journal of Multivariate Analysis, Vol. 88, No. 2, pp. 365-411.
+\bibitem{graphcov2010} Ami Wiesel , Yonina C. Eldar, and Alfred O. Hero (2010)  Covariance Estimation in Decomposable Gaussian
+Graphical Models, IEEE Transactions on signal processing, vol. 58, no.3. 
+
+\bibitem{RiskAssetAllocation2005} Attilio Meucci (2005) Risk and Asset Allocation,  Springer.
+
+\end{thebibliography}
+ 
+\end{document}
