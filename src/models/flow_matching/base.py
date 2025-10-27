@@ -161,7 +161,7 @@ class FlowMatchingModel(nn.Module):
         x = self.output_projection(x)
         return x
     
-    def fit(self, 
+    def fit(self,
             data: torch.Tensor,
             training_steps:int=1000,
             batch_size:int=64):
@@ -171,7 +171,7 @@ class FlowMatchingModel(nn.Module):
             x1 = data[torch.randint(data.size(0), (batch_size,))]
             x0 = torch.randn_like(x1)
             target = x1 - x0
-            t = torch.rand(x1.size(0))
+            t = torch.rand(x1.size(0), device=x1.device)
             xt = (1 - t[:, None]) * x0 + t[:, None] * x1
             pred = self(xt, t)
             loss = ((target - pred)**2).mean()
@@ -182,20 +182,22 @@ class FlowMatchingModel(nn.Module):
             if (i + 1) % 100 == 0:
                 print(f"Epoch {i+1}/{training_steps}, Loss: {loss:.4f}")
     
-    def sample(self, 
-               number_samples:int=1500, 
-               number_steps:int=1000, 
+    def sample(self,
+               number_samples:int=1500,
+               number_steps:int=1000,
                seed:int=42):
         """Sampling method for generation"""
         torch.manual_seed(seed)
         self.eval().requires_grad_(False)
-        
-        xt = torch.randn(number_samples, self.input_dimension)
-        
-        for i, t in enumerate(torch.linspace(0, 1, number_steps), start=1):
+
+        # Get device from model parameters
+        device = next(self.parameters()).device
+        xt = torch.randn(number_samples, self.input_dimension, device=device)
+
+        for i, t in enumerate(torch.linspace(0, 1, number_steps, device=device), start=1):
             pred = self(xt, t.expand(xt.size(0)))
             xt = xt + (1 / number_steps) * pred
-        
+
         self.train().requires_grad_(True)
         print("Done Sampling")
         return xt
